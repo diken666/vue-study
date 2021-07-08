@@ -3505,6 +3505,7 @@
     var parentVnode = vm.$vnode = options._parentVnode; // the placeholder node in parent tree
     var renderContext = parentVnode && parentVnode.context;
     vm.$slots = resolveSlots(options._renderChildren, renderContext);
+    // 插槽初始化为空对象
     vm.$scopedSlots = emptyObject;
     // bind the createElement fn to this instance
     // so that we get proper render context inside it.
@@ -3774,7 +3775,12 @@
     vm._hasHookEvent = false;
     // init parent attached events
     var listeners = vm.$options._parentListeners;
+    console.log("listeners ->", listeners);
     if (listeners) {
+      // eslint-disable-next-line no-debugger
+      debugger
+      console.log("event vm", vm);
+      console.log("event listeners", listeners);
       updateComponentListeners(vm, listeners);
     }
   }
@@ -4968,6 +4974,8 @@
   var uid$2 = 0;
 
   function initMixin (Vue) {
+    // 这里的options结构如下
+    // { el: "#app", data: {} }
     Vue.prototype._init = function (options) {
       var vm = this;
       // a uid
@@ -4984,17 +4992,24 @@
       // a flag to avoid this being observed
       vm._isVue = true;
       // merge options
+      // console.log("NODE_ENV ->", "development")
+      // console.log("options ->", options)
+      console.log("vm ->", vm);
+      // 如果是组件就
       if (options && options._isComponent) {
         // optimize internal component instantiation
         // since dynamic options merging is pretty slow, and none of the
         // internal component options needs special treatment.
         initInternalComponent(vm, options);
       } else {
+        console.log("vm.constructor", vm.constructor);
         vm.$options = mergeOptions(
           resolveConstructorOptions(vm.constructor),
           options || {},
           vm
         );
+        // console.log("nowOptions", options)
+        // console.log("merge", vm.$options)
       }
       /* istanbul ignore else */
       {
@@ -5002,7 +5017,9 @@
       }
       // expose real self
       vm._self = vm;
+      // 初始化生命周期
       initLifecycle(vm);
+      // 初始化事件绑定
       initEvents(vm);
       initRender(vm);
       callHook(vm, 'beforeCreate');
@@ -5043,6 +5060,7 @@
     }
   }
 
+  // 从组件构造函数中解析配置对象 options，并合并基类选项
   function resolveConstructorOptions (Ctor) {
     var options = Ctor.options;
     if (Ctor.super) {

@@ -13,6 +13,8 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  // 这里的options结构如下
+  // { el: "#app", data: {} }
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
@@ -29,17 +31,24 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // console.log("NODE_ENV ->", process.env.NODE_ENV)
+    // console.log("options ->", options)
+    console.log("vm ->", vm)
+    // 如果是组件就
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      console.log("vm.constructor", vm.constructor)
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
       )
+      // console.log("nowOptions", options)
+      // console.log("merge", vm.$options)
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
@@ -49,7 +58,9 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    // 初始化生命周期
     initLifecycle(vm)
+    // 初始化事件绑定
     initEvents(vm)
     initRender(vm)
     callHook(vm, 'beforeCreate')
@@ -90,6 +101,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   }
 }
 
+// 从组件构造函数中解析配置对象 options，并合并基类选项
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {

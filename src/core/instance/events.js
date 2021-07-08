@@ -14,7 +14,12 @@ export function initEvents (vm: Component) {
   vm._hasHookEvent = false
   // init parent attached events
   const listeners = vm.$options._parentListeners
+  console.log("listeners ->", listeners)
   if (listeners) {
+    // eslint-disable-next-line no-debugger
+    debugger
+    console.log("event vm", vm)
+    console.log("event listeners", listeners)
     updateComponentListeners(vm, listeners)
   }
 }

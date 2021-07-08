@@ -6,15 +6,37 @@
 </head>
 <body>
 <div id="app">
-  {{ msg }}
+  <span @click="log">{{ msg }}</span>
+  <test />
 </div>
 <script src="../dist/vue.js"></script>
 <script>
-  debugger
+  // debugger
+  const test = Vue.component("Test", {
+    data() {
+      return {
+        txt: "lalala"
+      }
+    },
+    methods: {
+      log() {
+        console.log('test123')
+      }
+    },
+    template:  `<p @click="log">{{txt}} 123</p>`
+  })
   new Vue({
     el: '#app',
+    components: {
+      test
+    },
     data: {
       msg: 'hello vue'
+    },
+    methods: {
+      log() {
+        console.log(111222)
+      }
     }
   })
 </script>
